@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Model</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Select Model and Options</h1>
+        <form action="/select_model" method="post" class="mt-4">
+            <input type="hidden" name="file_name" value="{{ file_name }}">
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <select name="model" class="form-control">
+                    <option value="Linear Regression">Linear Regression</option>
+                    <option value="Logistic Regression">Logistic Regression</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="encoding">Encoding:</label>
+                <select name="encoding" class="form-control">
+                    <option value="One Hot">One Hot</option>
+                    <option value="Label">Label</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="target">Target Variable:</label>
+                <select name="target" class="form-control">
+                    {% for column in columns %}
+                    <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
