@@ -7,6 +7,12 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Select Encoding for Columns</h1>
+        <h3 class="mt-4">List of String Variables (for Encoding)</h3>
+        <ul>
+            {% for column in string_columns %}
+            <li>{{ column }}</li>
+            {% endfor %}
+        </ul>
         <form action="/select_encoding" method="post" class="mt-4">
             <input type="hidden" name="file_name" value="{{ file_name }}">
             <div class="form-group">
@@ -20,7 +26,7 @@
             <div class="form-group">
                 <label for="label_columns">Select columns for Label Encoding:</label>
                 <select name="label_columns" class="form-control" multiple>
-                    {% for column in columns %}
+                    {% for column in string_columns %}
                     <option value="{{ column }}">{{ column }}</option>
                     {% endfor %}
                 </select>

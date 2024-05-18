@@ -23,7 +23,8 @@ def upload_file():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
         df = pd.read_csv(file_path)
-        return render_template('select_encoding.html', file_name=file.filename, columns=df.columns.tolist())
+        string_columns = df.select_dtypes(include=['object']).columns.tolist()
+        return render_template('select_encoding.html', file_name=file.filename, columns=df.columns.tolist(), string_columns=string_columns)
     return redirect(url_for('index'))
 
 @app.route('/select_encoding', methods=['POST'])
