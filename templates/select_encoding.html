@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Encoding</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Select Encoding for Columns</h1>
+        <form action="/select_encoding" method="post" class="mt-4">
+            <input type="hidden" name="file_name" value="{{ file_name }}">
+            <div class="form-group">
+                <label for="one_hot_columns">Select columns for One Hot Encoding:</label>
+                <select name="one_hot_columns" class="form-control" multiple>
+                    {% for column in columns %}
+                    <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="label_columns">Select columns for Label Encoding:</label>
+                <select name="label_columns" class="form-control" multiple>
+                    {% for column in columns %}
+                    <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Apply Encoding" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
