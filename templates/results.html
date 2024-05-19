@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -12,6 +14,8 @@
             {% for key, value in metrics.items() %}
             {% if key in ['Accuracy', 'F1 Score', 'Precision', 'Recall'] %}
             <li><strong>{{ key }}:</strong> {{ '%.4f'|format(value) }}</li>
+            {% else %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
             {% endif %}
             {% endfor %}
         </ul>

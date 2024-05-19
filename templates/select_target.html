@@ -1,31 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Target Variable</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Select Target Variable</h1>
-        <form action="/select_target" method="post" class="mt-4">
+        <form action="/select_target" method="post">
             <input type="hidden" name="file_name" value="{{ file_name }}">
             <div class="form-group">
-                <label for="model">Model:</label>
-                <select name="model" class="form-control">
+                <label for="model">Select Model:</label>
+                <select class="form-control" id="model" name="model">
                     <option value="Linear Regression">Linear Regression</option>
                     <option value="Logistic Regression">Logistic Regression</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="target">Target Variable:</label>
-                <select name="target" class="form-control">
+                <label for="target">Select Target Variable:</label>
+                <select class="form-control" id="target" name="target">
                     {% for column in columns %}
                     <option value="{{ column }}">{{ column }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="text-center">
-                <input type="submit" value="Submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary">Run Model</button>
             </div>
         </form>
     </div>
