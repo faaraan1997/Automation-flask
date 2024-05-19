@@ -7,10 +7,33 @@ from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
 import plotly.express as px
 import plotly.io as pio
 import os
+import json
+import numpy as np
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Function to save the label mapping
+def save_label_mapping(le, column_name):
+    mapping = dict(zip(le.classes_, le.transform(le.classes_)))
+    with open(os.path.join(app.config['UPLOAD_FOLDER'], f"{column_name}_mapping.json"), 'w') as f:
+        json.dump(mapping, f, cls=NumpyEncoder)
+
+# Function to load the label mapping
+def load_label_mapping(column_name):
+    with open(os.path.join(app.config['UPLOAD_FOLDER'], f"{column_name}_mapping.json"), 'r') as f:
+        return json.load(f)
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.integer)):
+            return int(obj)
+        elif isinstance(obj, (np.floating)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
 
 @app.route('/')
 def index():
@@ -44,6 +67,7 @@ def select_encoding():
         le = LabelEncoder()
         for col in label_columns:
             df[col] = le.fit_transform(df[col])
+            save_label_mapping(le, col)  # Save the label mapping
     
     updated_columns = df.columns.tolist()
     
@@ -76,7 +100,7 @@ def select_target():
             'Mean Squared Error': mse,
             'R2 Score': score
         }
-        return render_template('results.html', file_name=file_name, model_type=model_type, metrics=metrics, columns=df.columns.tolist(), target=target_variable)
+        return render_template('results.html', file_name=file_name, model_type=model_type, metrics=metrics, updated_columns=df.columns.tolist(), target=target_variable)
     
     elif model_type == 'Logistic Regression':
         model = LogisticRegression(max_iter=1000)
@@ -84,22 +108,32 @@ def select_target():
         predictions = model.predict(X_test)
         acc = accuracy_score(y_test, predictions)
         conf_matrix = confusion_matrix(y_test, predictions)
+        
+        # Convert the confusion matrix to a list of lists with Python native integers
+        conf_matrix = [[int(val) for val in row] for row in conf_matrix.tolist()]
+
+        # Load the label mapping for the target variable
+        label_mapping = load_label_mapping(target_variable)
+        inverse_label_mapping = {v: k for k, v in label_mapping.items()}  # Invert the mapping
+        labels = [inverse_label_mapping[i] for i in sorted(inverse_label_mapping)]  # Sorted to maintain order
+
         f1 = f1_score(y_test, predictions, average='macro')
         precision = precision_score(y_test, predictions, average='macro')
         recall = recall_score(y_test, predictions, average='macro')
+        
         metrics = {
             'Accuracy': acc,
-            'Confusion Matrix': conf_matrix,
             'F1 Score': f1,
             'Precision': precision,
             'Recall': recall
         }
-        return render_template('results.html', file_name=file_name, model_type=model_type, metrics=metrics, columns=df.columns.tolist(), target=target_variable)
+        
+        return render_template('results.html', file_name=file_name, model_type=model_type, metrics=metrics, conf_matrix=conf_matrix, labels=labels, updated_columns=df.columns.tolist(), target=target_variable)
 
 @app.route('/plot', methods=['POST'])
 def plot_graph():
     file_name = request.form['file_name']
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)  # Use the encoded file
     df = pd.read_csv(file_path)
 
     fig1 = px.bar(df, x='Product Category', y='Total Amount', title='Total Sales by Product Category')

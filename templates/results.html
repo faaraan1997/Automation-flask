@@ -13,9 +13,32 @@
             <li><strong>{{ key }}:</strong> {{ value }}</li>
             {% endfor %}
         </ul>
+        {% if model_type == 'Logistic Regression' %}
+        <h3 class="mt-4">Confusion Matrix</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for label in labels %}
+                    <th>Predicted {{ label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(conf_matrix|length) %}
+                <tr>
+                    <td>Actual {{ labels[i] }}</td>
+                    {% for value in conf_matrix[i] %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
         <h3 class="mt-4">Columns after Encoding</h3>
         <ul>
-            {% for column in columns %}
+            {% for column in updated_columns %}
             <li>{{ column }}</li>
             {% endfor %}
         </ul>
