@@ -10,7 +10,9 @@
         <h3 class="mt-4">Metrics</h3>
         <ul>
             {% for key, value in metrics.items() %}
-            <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% if key in ['Accuracy', 'F1 Score', 'Precision', 'Recall'] %}
+            <li><strong>{{ key }}:</strong> {{ '%.4f'|format(value) }}</li>
+            {% endif %}
             {% endfor %}
         </ul>
         {% if model_type == 'Logistic Regression' %}
@@ -36,12 +38,6 @@
             </tbody>
         </table>
         {% endif %}
-        <h3 class="mt-4">Columns after Encoding</h3>
-        <ul>
-            {% for column in updated_columns %}
-            <li>{{ column }}</li>
-            {% endfor %}
-        </ul>
         <form action="/plot" method="post">
             <input type="hidden" name="file_name" value="{{ file_name }}">
             <div class="text-center">
